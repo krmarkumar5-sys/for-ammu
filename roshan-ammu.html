@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roshan &amp; Ammu — Abiding in the Vine</title>
+<meta name="description" content="A living page of faith, love, and diligence for Ammu — from Roshan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     TOKENS
+     ============================================================ */
+  :root{
+    --ink:        #16211a;
+    --forest:     #1b4332;
+    --forest-2:   #2d6a4f;
+    --forest-3:   #40795c;
+    --gold:       #c9a227;
+    --gold-light: #e9c46a;
+    --rose:       #c97064;
+    --cream:      #faf6ee;
+    --paper:      #fffdf8;
+    --paper-2:    #f4efe2;
+    --line:       rgba(27,67,50,0.18);
+    --shadow:     0 20px 60px rgba(22,33,26,0.14);
+
+    --display: 'Cormorant Garamond', serif;
+    --body:    'EB Garamond', serif;
+    --label:   'Cinzel', serif;
+
+    --maxw: 1080px;
+    --pad: clamp(20px, 6vw, 72px);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *,*::before,*::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:18px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--gold-light); color:var(--ink); }
+
+  a{ color:inherit; }
+
+  h1,h2,h3,h4{
+    font-family:var(--display);
+    font-weight:600;
+    margin:0;
+    color:var(--forest);
+  }
+
+  .eyebrow{
+    font-family:var(--label);
+    font-size:12.5px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:26px; height:1px;
+    background:var(--gold);
+    display:inline-block;
+  }
+
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding-left:var(--pad);
+    padding-right:var(--pad);
+    position:relative;
+  }
+
+  :focus-visible{
+    outline:2px solid var(--forest-2);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  /* ============================================================
+     BACKDROP TEXTURE — soft paper grain + vignette
+     ============================================================ */
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    opacity:0.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============================================================
+     THE VINE — signature element.
+     A single SVG path runs the full height of the document behind
+     the content. Its stroke draws in as the reader travels down —
+     "I am the vine, ye are the branches" (John 15:5). Small leaf
+     glyphs bud open at each section as the vine reaches them.
+     ============================================================ */
+  #vine-holder{
+    position:absolute;
+    top:0; left:50%;
+    width:1px; height:100%;
+    transform:translateX(-50%);
+    z-index:0;
+    pointer-events:none;
+  }
+  #vine-svg{
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    overflow:visible;
+  }
+  #vine-path{
+    fill:none;
+    stroke:var(--forest-3);
+    stroke-width:2.2;
+    stroke-linecap:round;
+    opacity:0.55;
+  }
+  .leaf{
+    opacity:0;
+    transform-origin:center;
+    transition:opacity 900ms var(--ease), transform 900ms var(--ease);
+  }
+  .leaf.bud{
+    opacity:0.85;
+    transform:scale(1) rotate(var(--r, 0deg));
+  }
+
+  @media (max-width: 760px){
+    #vine-holder{ display:none; }
+  }
+
+  /* ============================================================
+     NAV DOTS — quiet section wayfinding
+     ============================================================ */
+  #dotnav{
+    position:fixed;
+    right:26px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:50;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  #dotnav a{
+    width:9px; height:9px;
+    border-radius:50%;
+    border:1px solid var(--forest-3);
+    background:transparent;
+    display:block;
+    transition:all 300ms var(--ease);
+  }
+  #dotnav a.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    transform:scale(1.35);
+  }
+  @media (max-width: 900px){ #dotnav{ display:none; } }
+
+  /* ============================================================
+     SECTION SCAFFOLD
+     ============================================================ */
+  section{
+    position:relative;
+    z-index:2;
+    padding:clamp(64px,10vw,140px) 0;
+  }
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 900ms var(--ease), transform 900ms var(--ease);
+  }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  .reveal.delay-1{ transition-delay:120ms; }
+  .reveal.delay-2{ transition-delay:240ms; }
+  .reveal.delay-3{ transition-delay:360ms; }
+
+  .divider{
+    width:1px;
+    height:64px;
+    background:linear-gradient(var(--forest-3), transparent);
+    margin:0 auto;
+    opacity:0.5;
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  #hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding-top:120px;
+    padding-bottom:60px;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(233,196,106,0.35), transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, var(--cream) 60%);
+  }
+
+  .fireflies{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+  .firefly{
+    position:absolute;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--gold-light);
+    box-shadow:0 0 10px 3px rgba(233,196,106,0.7);
+    opacity:0;
+    animation:drift 14s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%{ opacity:0; transform:translateY(0) translateX(0); }
+    12%{ opacity:0.9; }
+    50%{ transform:translateY(-140px) translateX(30px); }
+    88%{ opacity:0.5; }
+    100%{ opacity:0; transform:translateY(-280px) translateX(-10px); }
+  }
+
+  .hero-inner{ position:relative; z-index:2; max-width:760px; }
+
+  .hero-verse-ref{
+    font-family:var(--label);
+    font-size:12px;
+    letter-spacing:0.2em;
+    color:var(--forest-3);
+    text-transform:uppercase;
+    margin-bottom:22px;
+    display:block;
+  }
+
+  .names{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:clamp(52px, 10vw, 108px);
+    line-height:0.98;
+    color:var(--forest);
+    letter-spacing:-0.01em;
+    margin:8px 0 4px;
+  }
+  .names .and{
+    display:inline-block;
+    font-style:italic;
+    font-size:0.42em;
+    color:var(--gold);
+    vertical-align:middle;
+    margin:0 0.14em;
+    transform:translateY(-0.08em);
+  }
+
+  .hero-sub{
+    font-family:var(--body);
+    font-style:italic;
+    font-size:clamp(17px,2.4vw,21px);
+    color:var(--ink);
+    opacity:0.82;
+    max-width:520px;
+    margin:22px auto 0;
+  }
+
+  .hero-scroll-cue{
+    margin-top:56px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    font-family:var(--label);
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--forest-3);
+  }
+  .hero-scroll-cue .stem{
+    width:1px; height:34px;
+    background:var(--forest-3);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-scroll-cue .stem::after{
+    content:"";
+    position:absolute; left:0; top:-40%;
+    width:100%; height:40%;
+    background:var(--gold);
+    animation:trickle 2.4s ease-in-out infinite;
+  }
+  @keyframes trickle{
+    0%{ top:-40%; } 100%{ top:100%; }
+  }
+
+  /* ============================================================
+     JOURNEY / COUNTDOWN
+     ============================================================ */
+  #journey{ background:var(--paper); }
+  .journey-head{ text-align:center; max-width:640px; margin:0 auto 56px; }
+  .journey-head h2{ font-size:clamp(34px,5vw,50px); margin-top:14px; }
+  .journey-head p{ margin-top:16px; opacity:0.85; }
+
+  .timecards{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:20px;
+    max-width:900px;
+    margin:0 auto;
+  }
+  @media (min-width: 720px){
+    .timecards{ grid-template-columns:1fr 1fr; }
+  }
+
+  .timecard{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:34px 28px;
+    position:relative;
+    box-shadow:var(--shadow);
+  }
+  .timecard::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--gold), var(--rose));
+    border-radius:4px 4px 0 0;
+  }
+  .timecard .eyebrow{ margin-bottom:14px; }
+  .timecard h3{
+    font-family:var(--body);
+    font-weight:500;
+    font-style:italic;
+    font-size:16px;
+    color:var(--ink);
+    opacity:0.8;
+    margin-bottom:18px;
+  }
+
+  .digits{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .digit-block{
+    text-align:center;
+    min-width:64px;
+  }
+  .digit-num{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(30px,5vw,44px);
+    color:var(--forest);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .digit-label{
+    font-family:var(--label);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--forest-3);
+    margin-top:6px;
+    display:block;
+  }
+
+  .journey-note{
+    font-family:var(--body);
+    font-style:italic;
+    font-size:15px;
+    color:var(--forest-3);
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px dashed var(--line);
+  }
+
+  /* ============================================================
+     LETTER
+     ============================================================ */
+  #letter{ background:var(--cream); }
+  .letter-box{
+    max-width:660px;
+    margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    padding:clamp(32px,6vw,64px);
+    position:relative;
+  }
+  .letter-box::before{
+    content:"";
+    position:absolute; inset:12px;
+    border:1px solid var(--gold-light);
+    pointer-events:none;
+  }
+  .letter-drop{
+    float:left;
+    font-family:var(--display);
+    font-size:76px;
+    line-height:0.78;
+    padding:8px 12px 0 0;
+    color:var(--gold);
+    font-weight:600;
+  }
+  .letter-box p{ margin:0 0 18px; }
+  .letter-box p:last-of-type{ margin-bottom:0; }
+  .signoff{
+    margin-top:30px;
+    font-family:var(--display);
+    font-style:italic;
+    font-size:24px;
+    color:var(--forest);
+  }
+
+  /* ============================================================
+     VERSE CAROUSEL
+     ============================================================ */
+  #verses{
+    background:var(--forest);
+    color:var(--cream);
+    position:relative;
+    overflow:hidden;
+  }
+  #verses::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 700px 400px at 15% 10%, rgba(201,162,39,0.18), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 90% 90%, rgba(201,162,39,0.12), transparent 60%);
+  }
+  #verses .wrap{ position:relative; z-index:2; }
+  #verses .eyebrow{ color:var(--gold-light); }
+  #verses .eyebrow::before{ background:var(--gold-light); }
+  .verse-head{ text-align:center; max-width:560px; margin:0 auto 50px; }
+  .verse-head h2{ color:var(--paper); font-size:clamp(32px,5vw,46px); margin-top:14px; }
+
+  .carousel{
+    max-width:720px;
+    margin:0 auto;
+    min-height:260px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  .verse-slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity 700ms var(--ease), transform 700ms var(--ease);
+    pointer-events:none;
+    padding:0 8px;
+  }
+  .verse-slide.active{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+    position:relative;
+  }
+  .verse-text{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(21px,3.4vw,30px);
+    line-height:1.5;
+    color:var(--paper);
+  }
+  .verse-ref{
+    margin-top:22px;
+    font-family:var(--label);
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--gold-light);
+  }
+
+  .carousel-dots{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:44px;
+  }
+  .carousel-dots button{
+    width:8px; height:8px;
+    border-radius:50%;
+    border:1px solid var(--gold-light);
+    background:transparent;
+    cursor:pointer;
+    padding:0;
+    transition:all 300ms var(--ease);
+  }
+  .carousel-dots button.active{
+    background:var(--gold-light);
+    transform:scale(1.3);
+  }
+  .carousel-dots button:hover{ background:rgba(233,196,106,0.4); }
+
+  /* ============================================================
+     GOAL — HEAVEN, NO PROMISES
+     ============================================================ */
+  #goal{ background:var(--paper); }
+  .goal-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:44px;
+    align-items:start;
+    max-width:900px;
+    margin:0 auto;
+  }
+  @media (min-width:820px){
+    .goal-grid{ grid-template-columns:1.1fr 0.9fr; }
+  }
+  .goal-copy h2{ font-size:clamp(32px,5vw,46px); margin-top:14px; }
+  .goal-copy p{ margin-top:18px; opacity:0.88; }
+
+  .no-promise-card{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-left:3px solid var(--rose);
+    padding:28px 26px;
+    font-size:16px;
+  }
+  .no-promise-card .eyebrow{ color:var(--rose); margin-bottom:12px; }
+  .no-promise-card .eyebrow::before{ background:var(--rose); }
+  .no-promise-card blockquote{
+    margin:14px 0;
+    font-family:var(--display);
+    font-style:italic;
+    font-size:19px;
+    color:var(--forest);
+    padding-left:16px;
+    border-left:2px solid var(--gold-light);
+  }
+  .no-promise-card cite{
+    display:block;
+    font-family:var(--label);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--forest-3);
+    font-style:normal;
+    margin-top:10px;
+  }
+
+  .heaven-list{
+    list-style:none;
+    margin:26px 0 0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .heaven-list li{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    font-size:16px;
+  }
+  .heaven-list .leaf-mark{
+    flex:none;
+    width:18px; height:18px;
+    margin-top:4px;
+    color:var(--forest-3);
+  }
+
+  /* ============================================================
+     DISCIPLINE — for Ammu's practicals & the drift toward ease
+     ============================================================ */
+  #discipline{
+    background:linear-gradient(180deg, var(--forest) 0%, #16352a 100%);
+    color:var(--cream);
+  }
+  #discipline .eyebrow{ color:var(--gold-light); }
+  #discipline .eyebrow::before{ background:var(--gold-light); }
+  .disc-head{ max-width:640px; margin:0 auto 50px; text-align:center; }
+  .disc-head h2{ color:var(--paper); font-size:clamp(32px,5vw,46px); margin-top:14px; }
+  .disc-head p{ margin-top:16px; color:rgba(250,246,238,0.82); }
+
+  .field{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:22px;
+    max-width:980px;
+    margin:0 auto;
+  }
+  .stalk-card{
+    background:rgba(250,246,238,0.05);
+    border:1px solid rgba(250,246,238,0.16);
+    border-radius:3px;
+    padding:26px 24px;
+    position:relative;
+  }
+  .stalk-card svg{ width:26px; height:26px; color:var(--gold-light); margin-bottom:14px; }
+  .stalk-card h3{
+    color:var(--paper);
+    font-size:20px;
+    margin-bottom:10px;
+  }
+  .stalk-card p{
+    font-size:15px;
+    color:rgba(250,246,238,0.78);
+    margin:0 0 12px;
+  }
+  .stalk-card .ref{
+    font-family:var(--label);
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold-light);
+  }
+
+  .habit-box{
+    max-width:640px;
+    margin:60px auto 0;
+    background:rgba(250,246,238,0.06);
+    border:1px solid rgba(250,246,238,0.18);
+    padding:30px 28px;
+    border-radius:3px;
+  }
+  .habit-box h3{ color:var(--paper); font-size:20px; margin-bottom:16px; }
+  .habit-box ol{ margin:0; padding-left:20px; color:rgba(250,246,238,0.86); font-size:15.5px; }
+  .habit-box li{ margin-bottom:10px; }
+  .habit-box li:last-child{ margin-bottom:0; }
+
+  /* ============================================================
+     EXAM COUNTDOWN — interactive
+     ============================================================ */
+  #exam{ background:var(--cream); }
+  .exam-panel{
+    max-width:640px;
+    margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    padding:clamp(30px,6vw,52px);
+    text-align:center;
+  }
+  .exam-panel h2{ font-size:clamp(30px,5vw,40px); margin-top:14px; }
+  .exam-panel p.lead{ margin-top:14px; opacity:0.85; }
+
+  .exam-set{
+    margin-top:28px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .exam-set input[type="date"]{
+    font-family:var(--body);
+    font-size:15px;
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .exam-set button{
+    font-family:var(--label);
+    font-size:11.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    background:var(--forest);
+    color:var(--paper);
+    border:none;
+    padding:12px 22px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:background 250ms var(--ease), transform 250ms var(--ease);
+  }
+  .exam-set button:hover{ background:var(--forest-2); transform:translateY(-1px); }
+
+  #exam-result{
+    margin-top:32px;
+    display:none;
+  }
+  #exam-result.show{ display:block; }
+  .exam-days{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(48px,9vw,72px);
+    color:var(--forest);
+    line-height:1;
+  }
+  .exam-days-label{
+    font-family:var(--label);
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--forest-3);
+    margin-top:8px;
+  }
+  .exam-msg{
+    margin-top:20px;
+    font-family:var(--body);
+    font-style:italic;
+    font-size:16.5px;
+    color:var(--ink);
+    padding-top:18px;
+    border-top:1px dashed var(--line);
+  }
+
+  /* ============================================================
+     PRAYER
+     ============================================================ */
+  #prayer{
+    background:var(--paper-2);
+    text-align:center;
+  }
+  .prayer-inner{ max-width:640px; margin:0 auto; }
+  .prayer-inner h2{ font-size:clamp(32px,5vw,46px); margin-top:14px; }
+  .prayer-body{
+    margin-top:26px;
+    font-family:var(--display);
+    font-style:italic;
+    font-size:clamp(19px,2.6vw,23px);
+    line-height:1.75;
+    color:var(--forest);
+  }
+  .amen{
+    display:inline-block;
+    margin-top:30px;
+    font-family:var(--label);
+    letter-spacing:0.2em;
+    font-size:13px;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer{
+    background:var(--ink);
+    color:rgba(250,246,238,0.6);
+    text-align:center;
+    padding:44px var(--pad) 54px;
+    font-family:var(--label);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+  footer .verse-mini{
+    display:block;
+    margin-top:10px;
+    font-family:var(--body);
+    font-style:italic;
+    text-transform:none;
+    letter-spacing:0;
+    font-size:15px;
+    color:rgba(250,246,238,0.75);
+  }
+
+  /* generic small svg leaf used inline */
+  .icon-leaf{ display:inline-block; }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ================= VINE (signature element) ================= -->
+<div id="vine-holder" aria-hidden="true">
+  <svg id="vine-svg" width="120" height="100%" viewBox="0 0 120 6000" preserveAspectRatio="none">
+    <path id="vine-path" d="M60,0
+      C 20,300 100,500 60,800
+      C 20,1100 100,1300 60,1600
+      C 20,1900 100,2100 60,2400
+      C 20,2700 100,2900 60,3200
+      C 20,3500 100,3700 60,4000
+      C 20,4300 100,4500 60,4800
+      C 20,5100 100,5300 60,5600
+      C 20,5800 100,5900 60,6000" />
+  </svg>
+</div>
+
+<!-- ================= DOT NAV ================= -->
+<nav id="dotnav" aria-label="Section navigation">
+  <a href="#hero" data-label="Hero" class="active"></a>
+  <a href="#journey" data-label="Journey"></a>
+  <a href="#letter" data-label="Letter"></a>
+  <a href="#verses" data-label="Verses"></a>
+  <a href="#goal" data-label="Goal"></a>
+  <a href="#discipline" data-label="Discipline"></a>
+  <a href="#exam" data-label="Exam"></a>
+  <a href="#prayer" data-label="Prayer"></a>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section id="hero">
+  <div class="fireflies" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <span class="hero-verse-ref">John 15:5</span>
+    <h1 class="names">Roshan<span class="and">&amp;</span>Ammu</h1>
+    <p class="hero-sub">"I am the vine, ye are the branches: he that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing."</p>
+    <div class="hero-scroll-cue">
+      <span>Grow with me</span>
+      <span class="stem" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOURNEY / COUNTDOWN ================= -->
+<section id="journey">
+  <div class="wrap">
+    <div class="journey-head reveal">
+      <span class="eyebrow">Since the eighteenth of march</span>
+      <h2>Every day, still choosing you</h2>
+      <p>Time isn't the measure of us — God is. But I like counting anyway, because every single day with you has been worth marking.</p>
+    </div>
+
+    <div class="timecards">
+      <div class="timecard reveal delay-1">
+        <span class="eyebrow">Walking together</span>
+        <h3>Since 18 March 2026, 6:20 AM</h3>
+        <div class="digits" id="since-digits">
+          <div class="digit-block"><span class="digit-num" id="s-days">--</span><span class="digit-label">Days</span></div>
+          <div class="digit-block"><span class="digit-num" id="s-hours">--</span><span class="digit-label">Hours</span></div>
+          <div class="digit-block"><span class="digit-num" id="s-mins">--</span><span class="digit-label">Minutes</span></div>
+          <div class="digit-block"><span class="digit-num" id="s-secs">--</span><span class="digit-label">Seconds</span></div>
+        </div>
+        <p class="journey-note">This is how long God has let us walk this road side by side.</p>
+      </div>
+
+      <div class="timecard reveal delay-2">
+        <span class="eyebrow">Next anniversary</span>
+        <h3>Counting toward 18 March 2027</h3>
+        <div class="digits" id="until-digits">
+          <div class="digit-block"><span class="digit-num" id="u-days">--</span><span class="digit-label">Days</span></div>
+          <div class="digit-block"><span class="digit-num" id="u-hours">--</span><span class="digit-label">Hours</span></div>
+          <div class="digit-block"><span class="digit-num" id="u-mins">--</span><span class="digit-label">Minutes</span></div>
+          <div class="digit-block"><span class="digit-num" id="u-secs">--</span><span class="digit-label">Seconds</span></div>
+        </div>
+        <p class="journey-note">Not a vow, just a hope I carry — that God keeps writing our story past this date too.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LETTER ================= -->
+<section id="letter">
+  <div class="wrap">
+    <div class="journey-head reveal">
+      <span class="eyebrow">For you, Ammu</span>
+      <h2>A few things I keep telling God about you</h2>
+    </div>
+    <div class="letter-box reveal delay-1">
+      <span class="letter-drop">M</span>
+      <p>y Ammu, I don't say this because it's a nice thing to say — I say it because it's true every time I look at you: you are beautiful in a way that has nothing to do with light or angle or a good photo. It's the way you laugh with your whole face. It's the way you care for people quietly, without needing anyone to notice. God made you carefully, and I notice.</p>
+      <p>You've never once made me feel insecure. Not with a look, not with a word, not with silence. In a world that teaches people to keep each other guessing, you've only ever made me feel steady. I don't take that lightly. I think it's one of the quiet ways God has been kind to me — through you.</p>
+      <p>I'm not writing this to promise you anything. Jesus was clear about that in Matthew 5:37 — my "yes" should simply mean yes, my "no" should simply mean no; anything more than that comes from a place I don't want to build us on. So instead of vows, I'm giving you the truest thing I have: my sincere intention, today and for as many days as God gives me, to love you the way He asks me to — patiently, honestly, without keeping score.</p>
+      <p>What I want for us isn't just a good life together here. It's heaven. That's the actual goal. Every small thing — how we speak to each other, how we forgive, how we grow — is practice for eternity, not just for this life.</p>
+      <p class="signoff">Yours, in Christ and in every ordinary Tuesday —<br>Roshan</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VERSE CAROUSEL ================= -->
+<section id="verses">
+  <div class="wrap">
+    <div class="verse-head reveal">
+      <span class="eyebrow">The Word, for us</span>
+      <h2>Verses I hold over our love</h2>
+    </div>
+    <div class="carousel" id="carousel">
+      <!-- slides injected/controlled by JS, static fallback below for no-js -->
+      <div class="verse-slide active" data-index="0">
+        <p class="verse-text">"Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up... beareth all things, believeth all things, hopeth all things, endureth all things."</p>
+        <span class="verse-ref">1 Corinthians 13:4, 7</span>
+      </div>
+      <div class="verse-slide" data-index="1">
+        <p class="verse-text">"Many waters cannot quench love, neither can the floods drown it."</p>
+        <span class="verse-ref">Song of Solomon 8:7</span>
+      </div>
+      <div class="verse-slide" data-index="2">
+        <p class="verse-text">"Two are better than one; because they have a good reward for their labour. For if they fall, the one will lift up his fellow."</p>
+        <span class="verse-ref">Ecclesiastes 4:9&ndash;10</span>
+      </div>
+      <div class="verse-slide" data-index="3">
+        <p class="verse-text">"Delight thyself also in the LORD; and he shall give thee the desires of thine heart."</p>
+        <span class="verse-ref">Psalm 37:4</span>
+      </div>
+      <div class="verse-slide" data-index="4">
+        <p class="verse-text">"But let your communication be, Yea, yea; Nay, nay: for whatsoever is more than these cometh of evil."</p>
+        <span class="verse-ref">Matthew 5:37</span>
+      </div>
+      <div class="verse-slide" data-index="5">
+        <p class="verse-text">"For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end."</p>
+        <span class="verse-ref">Jeremiah 29:11</span>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+  </div>
+</section>
+
+<!-- ================= GOAL / HEAVEN, NO PROMISES ================= -->
+<section id="goal">
+  <div class="wrap">
+    <div class="goal-grid">
+      <div class="goal-copy reveal">
+        <span class="eyebrow">The only goal that matters</span>
+        <h2>Not a promise. A direction.</h2>
+        <p>I won't stand here and swear things to you, because I don't want our love resting on my willpower — it should rest on something steadier. Scripture tells me not to make oaths at all, so instead of vowing, I'm choosing, daily, on purpose, to point us toward God.</p>
+        <p>That's the real target: not just years together, but heaven, together. Everything else — patience on hard days, honesty when it's uncomfortable, choosing you again tomorrow — is just the practice of walking that direction.</p>
+        <ul class="heaven-list">
+          <li><svg class="leaf-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c5 3 8 7 8 11a8 8 0 0 1-16 0c0-4 3-8 8-11z"/><path d="M12 21V9"/></svg>Seek His kingdom first, and let everything else — including us — be added (Matthew 6:33).</li>
+          <li><svg class="leaf-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c5 3 8 7 8 11a8 8 0 0 1-16 0c0-4 3-8 8-11z"/><path d="M12 21V9"/></svg>Let our "yes" mean yes, plainly and always (Matthew 5:37).</li>
+          <li><svg class="leaf-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c5 3 8 7 8 11a8 8 0 0 1-16 0c0-4 3-8 8-11z"/><path d="M12 21V9"/></svg>Hold on to the hope that one day, every tear is wiped away for good (Revelation 21:4).</li>
+        </ul>
+      </div>
+      <div class="no-promise-card reveal delay-1">
+        <span class="eyebrow">Why no vows</span>
+        <blockquote>"But I say unto you, Swear not at all... let your communication be, Yea, yea; Nay, nay."</blockquote>
+        <cite>Matthew 5:34, 37</cite>
+        <p style="margin-top:16px; font-size:15px; opacity:0.85;">So when I say I want forever with you, Ammu, hear it as my sincere intention — not a binding oath, but a heart that keeps choosing you, one honest day at a time, under God.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DISCIPLINE ================= -->
+<section id="discipline">
+  <div class="wrap">
+    <div class="disc-head reveal">
+      <span class="eyebrow">A gentle push, with love</span>
+      <h2>Go to the ant, my love</h2>
+      <p>I'm not saying this to nag you — I'm saying it because I believe in you, and because the Bible has so much to say about steady, faithful work. Your practicals are close. Let's let scripture put fire back in your step.</p>
+    </div>
+
+    <div class="field">
+      <div class="stalk-card reveal delay-1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M6 8c0 3 2.5 4 6 4M18 14c0 3-2.5 4-6 4"/></svg>
+        <h3>Small, steady work</h3>
+        <p>"Go to the ant, thou sluggard; consider her ways, and be wise: which having no guide, overseer, or ruler, provideth her meat in the summer, and gathereth her food in the harvest."</p>
+        <span class="ref">Proverbs 6:6&ndash;8</span>
+      </div>
+      <div class="stalk-card reveal delay-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <h3>Don't grow weary</h3>
+        <p>"And let us not be weary in well doing: for in due season we shall reap, if we faint not."</p>
+        <span class="ref">Galatians 6:9</span>
+      </div>
+      <div class="stalk-card reveal delay-3">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20h16M8 20V10l4-6 4 6v10"/></svg>
+        <h3>Work for the Lord, not the deadline</h3>
+        <p>"And whatsoever ye do, do it heartily, as to the Lord, and not unto men."</p>
+        <span class="ref">Colossians 3:23</span>
+      </div>
+    </div>
+
+    <div class="habit-box reveal">
+      <h3>A tiny rhythm you can actually keep</h3>
+      <ol>
+        <li>Start the day with one minute of quiet before God — not a to-do list, just "here I am."</li>
+        <li>Work in short, honest blocks. Diligence isn't marathon suffering; it's showing up again and again.</li>
+        <li>When you feel the pull to scroll instead of study, say Philippians 4:13 out loud — "I can do all things through Christ which strengtheneth me" — and start with just five minutes.</li>
+        <li>End the day thanking God for what you did manage, not shaming yourself for what you didn't. Grace fuels discipline better than guilt ever will.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXAM COUNTDOWN ================= -->
+<section id="exam">
+  <div class="wrap">
+    <div class="exam-panel reveal">
+      <span class="eyebrow">August is close</span>
+      <h2>Let's count down to your exam, together</h2>
+      <p class="lead">Set the date below and I'll count the days with you. You're not doing this alone.</p>
+      <div class="exam-set">
+        <label for="exam-date" style="display:none;">Exam date</label>
+        <input type="date" id="exam-date" aria-label="Your exam date">
+        <button id="exam-set-btn" type="button">Start counting</button>
+      </div>
+      <div id="exam-result">
+        <div class="exam-days" id="exam-days">--</div>
+        <div class="exam-days-label">Days until your exam</div>
+        <p class="exam-msg" id="exam-msg">"I can do all things through Christ which strengtheneth me." — Philippians 4:13. One page at a time, Ammu. I'm praying for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRAYER ================= -->
+<section id="prayer">
+  <div class="wrap">
+    <div class="prayer-inner reveal">
+      <span class="eyebrow">A closing prayer</span>
+      <h2>For us</h2>
+      <p class="prayer-body">
+        Lord, thank You for Ammu. Thank You for her heart, her patience, her beauty inside and out.
+        Give her discipline for the days ahead and peace instead of pressure.
+        Keep us honest with each other, and keep our "yes" simply "yes," the way Your word asks of us.
+        Whatever years You give us here, let them be practice for the home we hope to share with You forever.
+        In Jesus' name,
+      </p>
+      <span class="amen">Amen</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Roshan &amp; Ammu
+  <span class="verse-mini">"Above all these things put on charity, which is the bond of perfectness." — Colossians 3:14</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------------------------------------------------
+     0. Small helpers
+  --------------------------------------------------------- */
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function qs(sel, ctx){ return (ctx||document).querySelector(sel); }
+  function qsa(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); }
+
+  /* ---------------------------------------------------------
+     1. Fireflies — ambient particles in the hero only
+  --------------------------------------------------------- */
+  (function initFireflies(){
+    var host = qs('.fireflies');
+    if(!host) return;
+    var count = window.innerWidth < 640 ? 10 : 18;
+    for(var i=0;i<count;i++){
+      var f = document.createElement('span');
+      f.className = 'firefly';
+      f.style.left = (Math.random()*100) + '%';
+      f.style.bottom = (Math.random()*30) + '%';
+      f.style.animationDelay = (Math.random()*14) + 's';
+      f.style.animationDuration = (10 + Math.random()*10) + 's';
+      host.appendChild(f);
+    }
+  })();
+
+  /* ---------------------------------------------------------
+     2. Reveal-on-scroll
+  --------------------------------------------------------- */
+  (function initReveal(){
+    var items = qsa('.reveal');
+    if(!('IntersectionObserver' in window)){
+      items.forEach(function(el){ el.classList.add('visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -60px 0px' });
+    items.forEach(function(el){ io.observe(el); });
+  })();
+
+  /* ---------------------------------------------------------
+     3. Dot navigation — active state sync
+  --------------------------------------------------------- */
+  (function initDotNav(){
+    var dots = qsa('#dotnav a');
+    if(!dots.length) return;
+    var sections = dots.map(function(d){ return qs(d.getAttribute('href')); }).filter(Boolean);
+    if(!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var id = '#' + entry.target.id;
+        var dot = dots.filter(function(d){ return d.getAttribute('href') === id; })[0];
+        if(!dot) return;
+        if(entry.isIntersecting){
+          dots.forEach(function(d){ d.classList.remove('active'); });
+          dot.classList.add('active');
+        }
+      });
+    }, { threshold: 0.5 });
+    sections.forEach(function(s){ io.observe(s); });
+  })();
+
+  /* ---------------------------------------------------------
+     4. Vine draw-in tied to scroll progress
+  --------------------------------------------------------- */
+  (function initVine(){
+    var path = qs('#vine-path');
+    var svg = qs('#vine-svg');
+    var holder = qs('#vine-holder');
+    if(!path || !svg || !holder) return;
+
+    function sizeVine(){
+      var docH = document.documentElement.scrollHeight;
+      holder.style.height = docH + 'px';
+      svg.setAttribute('height', docH);
+      svg.setAttribute('viewBox', '0 0 120 ' + docH);
+      var d = 'M60,0';
+      var step = 300;
+      var toggle = 1;
+      for(var y = step; y <= docH; y += step){
+        var cx = 60 + (toggle * 40);
+        d += ' C ' + (60 - toggle*40) + ',' + (y - step*0.65) + ' ' + cx + ',' + (y - step*0.35) + ' 60,' + y;
+        toggle *= -1;
+      }
+      path.setAttribute('d', d);
+      var len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      window.__vineLen = len;
+    }
+
+    function onScroll(){
+      var len = window.__vineLen || path.getTotalLength();
+      var scrollTop = window.scrollY || document.documentElement.scrollTop;
+      var docH = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = docH > 0 ? Math.min(1, scrollTop / docH) : 0;
+      path.style.strokeDashoffset = String(len * (1 - progress));
+    }
+
+    sizeVine();
+    onScroll();
+    window.addEventListener('resize', function(){ sizeVine(); onScroll(); });
+    window.addEventListener('scroll', onScroll, { passive:true });
+  })();
+
+  /* ---------------------------------------------------------
+     5. "Since 18 March 2026, 6:20 AM" ascending counter
+     and "Until next 18 March 2027" descending counter
+  --------------------------------------------------------- */
+  (function initClocks(){
+    var since = new Date(2026, 2, 18, 6, 20, 0); // months are 0-indexed: 2 = March
+    var until = new Date(2027, 2, 18, 6, 20, 0);
+
+    var sDays = qs('#s-days'), sHours = qs('#s-hours'), sMins = qs('#s-mins'), sSecs = qs('#s-secs');
+    var uDays = qs('#u-days'), uHours = qs('#u-hours'), uMins = qs('#u-mins'), uSecs = qs('#u-secs');
+
+    function diffParts(a,b){
+      var ms = Math.max(0, b - a);
+      var totalSec = Math.floor(ms/1000);
+      var days = Math.floor(totalSec / 86400);
+      var hours = Math.floor((totalSec % 86400) / 3600);
+      var mins = Math.floor((totalSec % 3600) / 60);
+      var secs = totalSec % 60;
+      return { days:days, hours:hours, mins:mins, secs:secs };
+    }
+
+    function tick(){
+      var now = new Date();
+
+      if(sDays){
+        var p1 = diffParts(since, now);
+        sDays.textContent = p1.days;
+        sHours.textContent = pad(p1.hours);
+        sMins.textContent = pad(p1.mins);
+        sSecs.textContent = pad(p1.secs);
+      }
+
+      if(uDays){
+        var p2 = diffParts(now, until);
+        uDays.textContent = p2.days;
+        uHours.textContent = pad(p2.hours);
+        uMins.textContent = pad(p2.mins);
+        uSecs.textContent = pad(p2.secs);
+      }
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+  /* ---------------------------------------------------------
+     6. Verse carousel — auto-rotate + manual dots
+  --------------------------------------------------------- */
+  (function initCarousel(){
+    var slides = qsa('.verse-slide');
+    var dotsHost = qs('#carousel-dots');
+    if(!slides.length || !dotsHost) return;
+
+    var current = 0;
+    var timer = null;
+    var AUTO_MS = 6000;
+
+    slides.forEach(function(_, i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Show verse ' + (i+1));
+      if(i === 0) b.classList.add('active');
+      b.addEventListener('click', function(){ goTo(i); restart(); });
+      dotsHost.appendChild(b);
+    });
+
+    var dotEls = qsa('button', dotsHost);
+
+    function goTo(i){
+      slides[current].classList.remove('active');
+      dotEls[current].classList.remove('active');
+      current = (i + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dotEls[current].classList.add('active');
+    }
+
+    function next(){ goTo(current + 1); }
+
+    function restart(){
+      if(timer) clearInterval(timer);
+      timer = setInterval(next, AUTO_MS);
+    }
+
+    restart();
+  })();
+
+  /* ---------------------------------------------------------
+     7. Exam countdown — user sets a date, JS counts down
+  --------------------------------------------------------- */
+  (function initExam(){
+    var input = qs('#exam-date');
+    var btn = qs('#exam-set-btn');
+    var result = qs('#exam-result');
+    var daysEl = qs('#exam-days');
+    var msgEl = qs('#exam-msg');
+    if(!input || !btn) return;
+
+    // sensible default: two weeks into August, adjustable by Ammu/Roshan
+    var d = new Date();
+    var defaultDate = new Date(d.getFullYear(), 7, 15); // August is month index 7
+    if(defaultDate < d) defaultDate.setFullYear(defaultDate.getFullYear() + 1);
+    input.value = defaultDate.toISOString().slice(0,10);
+
+    var messages = [
+      { max: 3,  text: "This is the final stretch. Breathe, review gently, and trust the work you've already put in. \u201cBe strong and of a good courage.\u201d — Joshua 1:9" },
+      { max: 7,  text: "One week. Steady pace beats a frantic sprint. \u201cThe soul of the diligent shall be made fat.\u201d — Proverbs 13:4" },
+      { max: 14, text: "Two weeks is plenty of room to build a rhythm. Small daily sessions, done heartily unto the Lord. — Colossians 3:23" },
+      { max: 999,text: "Plenty of runway left. Let's turn it into steady habits now, not last-minute panic. \u201cGo to the ant, thou sluggard.\u201d — Proverbs 6:6" }
+    ];
+
+    function render(){
+      var target = new Date(input.value + 'T00:00:00');
+      if(isNaN(target.getTime())) return;
+      var now = new Date();
+      var ms = target - now;
+      var days = Math.max(0, Math.ceil(ms / 86400000));
+      daysEl.textContent = days;
+      var chosen = messages[messages.length - 1];
+      for(var i=0;i<messages.length;i++){
+        if(days <= messages[i].max){ chosen = messages[i]; break; }
+      }
+      msgEl.textContent = chosen.text;
+      result.classList.add('show');
+    }
+
+    btn.addEventListener('click', render);
+    render();
+  })();
+
+})();
+</script>
+</body>
+</html>
